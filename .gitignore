@@ -31,3 +31,5 @@
 # Weird ass mac stuff
 .DS_Store
 ._*
+
+*.sublime-workspace

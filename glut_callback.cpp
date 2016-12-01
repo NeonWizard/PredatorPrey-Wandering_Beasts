@@ -6,9 +6,9 @@
 // GLUT callback functions
 //
 
-int g_x = 300;
-int g_circle_x = 50;
-int g_circle_y = 50;
+// int g_x = 300;
+// int g_circle_x = 50;
+// int g_circle_y = 50;
 
 // This callback function gets called by the Glut
 // system whenever it decides things need to be redrawn.
@@ -18,16 +18,20 @@ void display(void)
 
   // Test lines that draw all three shapes and some text.
   // Delete these when you get your code working.
-  glColor3d(0.25,0.75,0.5);
-  DrawRectangle(200, 200, 250, 250);
-  glColor3d(0,0,1);
-  DrawTriangle(g_x, 300, g_x+50, 300, g_x+50, 350);
-  glColor3d(1.0,0.75,0.5);
-  DrawCircle(g_circle_x, g_circle_y, 30);
+  // glColor3d(0.25,0.75,0.5);
+  // DrawRectangle(200, 200, 250, 250);
+  // glColor3d(0,0,1);
+  // DrawTriangle(g_x, 300, g_x+50, 300, g_x+50, 350);
+  // glColor3d(1.0,0.75,0.5);
+  // DrawCircle(g_circle_x, g_circle_y, 30);
 
-  glColor3d(0,0,0);
-  DrawCircle(10, 100, 3);
-  DrawText(10,100,"Can you see this black text and 3 blue shapes?");
+  // glColor3d(0,0,0);
+  // DrawCircle(10, 100, 3);
+  // DrawText(10,100,"Can you see this black text and 3 blue shapes?");
+
+  // for (size_t i=0; i<15; i++) {
+  //   creatures[i]->draw(creatures[i]->getX()*(g_screen_x/g_map_width), creatures[i]->getY()*(g_screen_y/g_map_height), (g_screen_x/g_map_width), (g_screen_y/g_map_height));
+  // }
 
   glutSwapBuffers();
 }
@@ -42,13 +46,6 @@ void keyboard(unsigned char c, int x, int y)
     case 'q':
     case 27: // escape character means to quit the program
       exit(0);
-      break;
-    case 'd':
-      g_x += 10;
-      break;
-    case 'b':
-      // do something when 'b' character is hit.
-      std::cout << "b Key Down." << std::endl;
       break;
     default:
       return; // if we don't care, return without glutPostRedisplay()
@@ -82,25 +79,13 @@ void reshape(int w, int h)
 void mouse(int mouse_button, int state, int x, int y)
 {
   // translate pixel coordinates to display coordinates
-  int xdisplay = x;
-  int ydisplay = g_screen_y - y;
+  // int xdisplay = x;
+  // int ydisplay = g_screen_y - y;
   if (mouse_button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) 
     {
-      std::cout << "Left Mouse Down. @" << xdisplay << "," << ydisplay << std::endl;
-      g_circle_x = xdisplay;
-      g_circle_y = ydisplay;
     }
   if (mouse_button == GLUT_LEFT_BUTTON && state == GLUT_UP) 
     {
-      std::cout << "Left Mouse Up. @" << xdisplay << "," << ydisplay << std::endl;
-    }
-  if (mouse_button == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN) 
-    {
-      std::cout << "Middle Mouse Down. @" << xdisplay << "," << ydisplay << std::endl;
-    }
-  if (mouse_button == GLUT_MIDDLE_BUTTON && state == GLUT_UP) 
-    {
-      std::cout << "Middle Mouse Up. @" << xdisplay << "," << ydisplay << std::endl;
     }
   glutPostRedisplay();
 }

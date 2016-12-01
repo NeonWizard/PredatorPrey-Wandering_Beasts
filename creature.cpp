@@ -1,4 +1,5 @@
 #include "creature.h"
+#include "glut_app.h"
 
 Creature::Creature() {
 	
@@ -23,4 +24,9 @@ int Creature::getY() {
 
 void Creature::makeRandomMove(bool canNorth, bool canSouth, bool canWest, bool canEast) {
 	
+}
+
+void Creature::draw(int posX, int posY, int width, int height) {
+	glColor3d(0, 0, 0);
+	DrawRectangle(posX, posY, width, height);
 }

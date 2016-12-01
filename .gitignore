@@ -33,3 +33,5 @@
 ._*
 
 *.sublime-workspace
+
+glut_main

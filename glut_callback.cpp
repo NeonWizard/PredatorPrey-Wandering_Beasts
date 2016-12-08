@@ -29,9 +29,16 @@ void display(void)
   // DrawCircle(10, 100, 3);
   // DrawText(10,100,"Can you see this black text and 3 blue shapes?");
 
-  // for (size_t i=0; i<15; i++) {
-  //   creatures[i]->draw(creatures[i]->getX()*(g_screen_x/g_map_width), creatures[i]->getY()*(g_screen_y/g_map_height), (g_screen_x/g_map_width), (g_screen_y/g_map_height));
-  // }
+  for (size_t i=0; i<15; i++) {
+    double drawX = creatures[i]->getX()*(g_screen_x/g_map_width);
+    double drawY = g_screen_y - creatures[i]->getY()*(g_screen_y/g_map_height);
+    creatures[i]->draw(
+      drawX,
+      drawY,
+      drawX + (g_screen_x/g_map_width),
+      drawY - (g_screen_y/g_map_height)
+    );
+  }
 
   glutSwapBuffers();
 }
@@ -47,6 +54,26 @@ void keyboard(unsigned char c, int x, int y)
     case 27: // escape character means to quit the program
       exit(0);
       break;
+    case 's':
+      {
+        Creature* c = creatures[curCreature];
+
+        // Move the creature
+        creatureMap[c->getX()][c->getY()] = 0;
+        bool north = (c->getY() > 0);
+        bool south = c->getY() < g_map_height-1;
+        bool east = c->getX() < g_map_width-1;
+        bool west = c->getX() > 0;
+        c->makeRandomMove(north, south, east, west);
+        creatureMap[c->getX()][c->getY()] = c;
+
+        curCreature = (curCreature + 1) % creatures.size(); // Cycle to next creature
+      }
+      break;
+    case 'd':
+      std::cout << "--- Debug Info ---" << std::endl;
+      std::cout << "Creatures size: " << creatures.size() << std::endl;
+      std::cout << "Current creature: " << curCreature << std::endl;
     default:
       return; // if we don't care, return without glutPostRedisplay()
     }

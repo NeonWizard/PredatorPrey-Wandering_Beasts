@@ -12,7 +12,7 @@ class Creature {
 		int getX();
 		int getY();
 
-		void makeRandomMove(bool canNorth, bool canSouth, bool canWest, bool canEast);
+		void makeRandomMove(bool canNorth, bool canSouth, bool canEast, bool canWest);
 		virtual void draw(int posX, int posY, int width, int height);
 
 	protected:

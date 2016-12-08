@@ -48,8 +48,9 @@ void DrawText(double x, double y, const char *string);
 extern size_t g_map_width;
 extern size_t g_map_height;
 
+extern size_t curCreature;
 extern std::vector<Creature *> creatures;
-// extern std::vector< std::vector<Creature *> > creatureMap;
+extern std::vector< std::vector<Creature *> > creatureMap;
 
 void initialize_app();
 

@@ -5,13 +5,13 @@
 #include <time.h>
 #include <cstdlib>
 #include <vector>
-#include <iostream>
 
 size_t g_map_width = 20;
 size_t g_map_height = 15;
 
+size_t curCreature = 0;
 std::vector<Creature *> creatures;
-// std::vector< std::vector<Creature *> > creatureMap;
+std::vector< std::vector<Creature *> > creatureMap;
 
 // Your initialization code goes here.
 void initialize_app()
@@ -20,10 +20,10 @@ void initialize_app()
 	srand(time(0));
 	
 	// Size the creatureMap
-	// creatureMap.resize(g_map_width);
-	// for (size_t i=0; i<g_map_width; i++) {
-	// 	creatureMap[i].resize(g_map_height);
-	// }
+	creatureMap.resize(g_map_width);
+	for (size_t i=0; i<g_map_width; i++) {
+		creatureMap[i].resize(g_map_height);
+	}
 
 	int predators = 0;
 	int prey = 0;
@@ -36,15 +36,16 @@ void initialize_app()
 		if (rand() % 15 < 10 && prey < 10) {
 			prey++;
 			// create prey
-			std::cout << "Created prey at ("<<x<<", "<<y<<")" << std::endl;
-			creatures.push_back(new Predator(x, y));
-
+			Predator* pred = new Predator(x, y);
+			creatures.push_back(pred);
+			creatureMap[x][y] = pred;
 		}
 		else {
 			predators++;
 			// create predator
-			std::cout << "Created predator at ("<<x<<", "<<y<<")" << std::endl;
-			creatures.push_back(new Prey(x, y));
+			Prey* prey = new Prey(x, y);
+			creatures.push_back(prey);
+			creatureMap[x][y] = prey;
 		}
 	}
 }

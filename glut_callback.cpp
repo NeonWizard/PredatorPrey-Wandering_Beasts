@@ -19,19 +19,6 @@ void display(void)
 {
   glClear(GL_COLOR_BUFFER_BIT);
 
-  // Test lines that draw all three shapes and some text.
-  // Delete these when you get your code working.
-  // glColor3d(0.25,0.75,0.5);
-  // DrawRectangle(200, 200, 250, 250);
-  // glColor3d(0,0,1);
-  // DrawTriangle(g_x, 300, g_x+50, 300, g_x+50, 350);
-  // glColor3d(1.0,0.75,0.5);
-  // DrawCircle(g_circle_x, g_circle_y, 30);
-
-  // glColor3d(0,0,0);
-  // DrawCircle(10, 100, 3);
-  // DrawText(10,100,"Can you see this black text and 3 blue shapes?");
-
   for (size_t i=0; i<creatures.size(); i++) {
     if (creatures[i] == 0) continue;
     double drawX = creatures[i]->getX()*(g_screen_x/g_map_width);
@@ -42,24 +29,80 @@ void display(void)
       drawX + (g_screen_x/g_map_width),
       drawY - (g_screen_y/g_map_height)
     );
-    char buffer[256];
-    sprintf(buffer, "%d", int(i));
-    glColor3d(0, 0, 0);
-    DrawText(drawX + (g_screen_x / g_map_width), drawY - (g_screen_y/g_map_height), buffer);
+    // char buffer[256];
+    // sprintf(buffer, "%d", int(i));
+    // glColor3d(0, 0, 0);
+    // DrawText(drawX + (g_screen_x / g_map_width), drawY - (g_screen_y/g_map_height), buffer);
   }
 
-  glColor3d(0, 0, 0);
-  for (size_t x=0; x<creatureMap.size(); x++) {
-    for (size_t y=0; y<creatureMap[0].size(); y++) {
-      if (creatureMap[x][y] != 0) {
-        DrawText(x*(g_screen_x/g_map_width), g_screen_y - y*(g_screen_y/g_map_height), dynamic_cast<Predator*>(creatureMap[x][y]) ? "Predator" : "Prey");
-      }
-    }
-  }
+  // glColor3d(0, 0, 0);
+  // for (size_t x=0; x<creatureMap.size(); x++) {
+  //   for (size_t y=0; y<creatureMap[0].size(); y++) {
+  //     if (creatureMap[x][y] != 0) {
+  //       DrawText(x*(g_screen_x/g_map_width), g_screen_y - y*(g_screen_y/g_map_height), dynamic_cast<Predator*>(creatureMap[x][y]) ? "Predator" : "Prey");
+  //     }
+  //   }
+  // }
 
   glutSwapBuffers();
 }
 
+
+void doRound() {
+  Creature* c = creatures[curCreature];
+
+  creatureMap[c->getX()][c->getY()] = 0;
+  c->makeMove(creatureMap);
+  creatureMap[c->getX()][c->getY()] = c;
+
+  // Reproduction
+  if (dynamic_cast<Predator*>(creatures[curCreature]) && (creatures[curCreature]->getMoveCount()+1) % 8 == 0) {
+    // Predator reproduction
+    Predator* pred = new Predator(creatures[curCreature]->getX(), creatures[curCreature]->getY());
+    if (pred->makeMove(creatureMap)) {
+      // child could move somewhere
+      creatures.push_back(pred);
+      pred->resetMoveCount();
+      creatureMap[pred->getX()][pred->getY()] = pred;
+    }
+  } else if (dynamic_cast<Prey*>(creatures[curCreature]) && (creatures[curCreature]->getMoveCount()+1) % 3 == 0) {
+    // Prey reproduction
+    Prey* prey = new Prey(creatures[curCreature]->getX(), creatures[curCreature]->getY());
+    if (prey->makeMove(creatureMap)) {
+      // child could move somewhere
+      creatures.push_back(prey);
+      prey->resetMoveCount();
+      creatureMap[prey->getX()][prey->getY()] = prey;
+    }
+  }
+
+  // Reaper loop
+  for (size_t i=0; i<creatures.size(); i++) {
+    if (creatures[i] == 0) continue;
+
+    if (creatures[i]->shouldDie()) {
+      if (dynamic_cast<Predator*>(creatures[i])) {
+        creatureMap[creatures[i]->getX()][creatures[i]->getY()] = 0;
+      }
+      creatures[i] = 0;
+      continue;
+    }
+  }
+
+  while (1) {
+    curCreature = (curCreature + 1) % creatures.size();
+
+    if (curCreature == 0) { // Clean up time
+      for (size_t i=creatures.size()-1; i>0; i--) {
+        if (creatures[i] == 0) {
+          creatures.erase(creatures.begin()+i);
+        }
+      }
+    }
+
+    if (creatures[curCreature] != 0) break; // Break out of the loop when we find a creature
+  }
+}
 
 // This callback function gets called by the Glut
 // system whenever a key is pressed.
@@ -72,57 +115,11 @@ void keyboard(unsigned char c, int x, int y)
       exit(0);
       break;
     case 's':
-      {
-        Creature* c = creatures[curCreature];
-
-        c->makeMove(creatureMap);
-
-        // Reproduction
-        if (dynamic_cast<Predator*>(creatures[curCreature]) && (creatures[curCreature]->getMoveCount()+1) % 8 == 0) {
-          // Predator reproduction
-          Predator* pred = new Predator(creatures[curCreature]->getX(), creatures[curCreature]->getY());
-          if (pred->makeMove(creatureMap)) {
-            // child could move somewhere
-            creatures.push_back(pred);
-            pred->resetMoveCount();
-          }
-        } else if (dynamic_cast<Prey*>(creatures[curCreature]) && (creatures[curCreature]->getMoveCount()+1) % 3 == 0) {
-          // Prey reproduction
-          Prey* prey = new Prey(creatures[curCreature]->getX(), creatures[curCreature]->getY());
-          if (prey->makeMove(creatureMap)) {
-            // child could move somewhere
-            creatures.push_back(prey);
-            prey->resetMoveCount();
-          }
-        }
-
-        // Reaper loop
-        for (size_t i=0; i<creatures.size(); i++) {
-          if (creatures[i] == 0) continue;
-
-          if (creatures[i]->shouldDie()) {
-            if (dynamic_cast<Predator*>(creatures[i])) {
-              creatureMap[creatures[i]->getX()][creatures[i]->getY()] = 0;
-            }
-            creatures[i] = 0;
-            continue;
-          }
-        }
-
-        while (1) {
-          curCreature = (curCreature + 1) % creatures.size();
-
-          if (curCreature == 0) { // Clean up time
-            for (size_t i=creatures.size()-1; i>0; i--) {
-              if (creatures[i] == 0) {
-                std::cout << "erase " << i << std::endl;
-                creatures.erase(creatures.begin()+i);
-              }
-            }
-          }
-
-          if (creatures[curCreature] != 0) break; // Break out of the loop when we find a creature
-        }
+      doRound();
+      break;
+    case 'a':
+      for (size_t i=0; i<creatures.size(); i++) {
+        doRound();
       }
       break;
     case 'd':

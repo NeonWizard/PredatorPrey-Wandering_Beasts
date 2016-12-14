@@ -72,7 +72,6 @@ bool Creature::makeMove(std::vector< std::vector<Creature*> > &creatureMap) {
 	}
 	if (numTrues == 0) return false;
 
-	creatureMap[getX()][getY()] = 0;
 	switch (choices[rand() % numTrues]) {
 		case 0:
 			mY -= 1;
@@ -87,8 +86,6 @@ bool Creature::makeMove(std::vector< std::vector<Creature*> > &creatureMap) {
 			mX -= 1;
 			break;
 	}
-
-	creatureMap[getX()][getY()] = this;
 
 	return true;
 }

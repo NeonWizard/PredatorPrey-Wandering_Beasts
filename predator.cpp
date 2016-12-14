@@ -96,10 +96,8 @@ bool Predator::makeMove(std::vector< std::vector<Creature*> > &creatureMap) {
 	} else {
 		mSinceEat++;
 	}
-	creatureMap[getX()][getY()] = 0;
 	mX += moveX;
 	mY += moveY;
-	creatureMap[getX()][getY()] = this;
 
 	return true;
 }

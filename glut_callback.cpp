@@ -9,10 +9,6 @@
 // GLUT callback functions
 //
 
-// int g_x = 300;
-// int g_circle_x = 50;
-// int g_circle_y = 50;
-
 // This callback function gets called by the Glut
 // system whenever it decides things need to be redrawn.
 void display(void)
@@ -29,20 +25,7 @@ void display(void)
       drawX + (g_screen_x/g_map_width),
       drawY - (g_screen_y/g_map_height)
     );
-    // char buffer[256];
-    // sprintf(buffer, "%d", int(i));
-    // glColor3d(0, 0, 0);
-    // DrawText(drawX + (g_screen_x / g_map_width), drawY - (g_screen_y/g_map_height), buffer);
   }
-
-  // glColor3d(0, 0, 0);
-  // for (size_t x=0; x<creatureMap.size(); x++) {
-  //   for (size_t y=0; y<creatureMap[0].size(); y++) {
-  //     if (creatureMap[x][y] != 0) {
-  //       DrawText(x*(g_screen_x/g_map_width), g_screen_y - y*(g_screen_y/g_map_height), dynamic_cast<Predator*>(creatureMap[x][y]) ? "Predator" : "Prey");
-  //     }
-  //   }
-  // }
 
   glutSwapBuffers();
 }
@@ -158,8 +141,6 @@ void reshape(int w, int h)
 void mouse(int mouse_button, int state, int x, int y)
 {
   // translate pixel coordinates to display coordinates
-  // int xdisplay = x;
-  // int ydisplay = g_screen_y - y;
   if (mouse_button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) 
     {
     }

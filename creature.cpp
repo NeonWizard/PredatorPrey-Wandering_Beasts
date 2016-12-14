@@ -1,12 +1,18 @@
 #include "creature.h"
 #include "glut_app.h"
 
+#include <vector>
+#include <iostream>
+
 Creature::Creature() {
-	
+	mIsEaten = false;
+	mMoveCount = 0;
 }
 
 Creature::Creature(int x, int y) {
 	setPos(x, y);
+	mIsEaten = false;
+	mMoveCount = 0;
 }
 
 void Creature::setPos(int x, int y) {
@@ -22,27 +28,51 @@ int Creature::getY() {
 	return mY;
 }
 
-void Creature::makeRandomMove(bool canNorth, bool canSouth, bool canEast, bool canWest) {
+bool Creature::shouldDie() {
+	return mIsEaten;
+}
+
+void Creature::getEaten() {
+	mIsEaten = true;
+}
+
+int Creature::getMoveCount() {
+	return mMoveCount;
+}
+
+void Creature::resetMoveCount() {
+	mMoveCount = 0;
+}
+
+bool Creature::makeMove(std::vector< std::vector<Creature*> > &creatureMap) {
+	mMoveCount++;
+
+	bool north = (getY() > 0) && creatureMap[getX()][getY()-1] == 0;
+	bool south = (getY() < creatureMap[0].size()-1) && creatureMap[getX()][getY()+1] == 0;
+	bool east = (getX() < creatureMap.size()-1) && creatureMap[getX()+1][getY()] == 0;
+	bool west = (getX() > 0) && creatureMap[getX()-1][getY()] == 0;
+
 	int choices[4];
 	int numTrues = 0;
-	if (canNorth) {
+	if (north) {
 		choices[numTrues] = 0;
 		numTrues++;
 	}
-	if (canSouth) {
+	if (south) {
 		choices[numTrues] = 1;
 		numTrues++;
 	}
-	if (canEast) {
+	if (east) {
 		choices[numTrues] = 2;
 		numTrues++;
 	}
-	if (canWest) {
+	if (west) {
 		choices[numTrues] = 3;
 		numTrues++;
 	}
-	if (numTrues == 0) return;
+	if (numTrues == 0) return false;
 
+	creatureMap[getX()][getY()] = 0;
 	switch (choices[rand() % numTrues]) {
 		case 0:
 			mY -= 1;
@@ -57,6 +87,10 @@ void Creature::makeRandomMove(bool canNorth, bool canSouth, bool canEast, bool c
 			mX -= 1;
 			break;
 	}
+
+	creatureMap[getX()][getY()] = this;
+
+	return true;
 }
 
 void Creature::draw(int posX, int posY, int width, int height) {

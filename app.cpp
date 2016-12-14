@@ -5,9 +5,10 @@
 #include <time.h>
 #include <cstdlib>
 #include <vector>
+#include <algorithm>
 
 size_t g_map_width = 20;
-size_t g_map_height = 15;
+size_t g_map_height = 20;
 
 size_t curCreature = 0;
 std::vector<Creature *> creatures;
@@ -25,27 +26,29 @@ void initialize_app()
 		creatureMap[i].resize(g_map_height);
 	}
 
-	int predators = 0;
-	int prey = 0;
-	// Generate 5 predators and 10 prey
-	for (int i = 0; i<15; i++) {
+	int preyCount = 0;
+	// Generate 5 predators and 25 prey
+	for (int i = 0; i<30; i++) {
 		int x, y;
 		x = rand() % g_map_width;
 		y = rand() % g_map_height;
+		while (creatureMap[x][y] != 0) {
+			x = rand() % g_map_width;
+			y = rand() % g_map_height;
+		}
 
-		if (rand() % 15 < 10 && prey < 10) {
-			prey++;
+		if (preyCount < 25) {
+			preyCount++;
 			// create prey
+			Prey* prey = new Prey(x, y);
+			creatures.push_back(prey);
+			creatureMap[x][y] = prey;
+		} else {
+			// create predator
 			Predator* pred = new Predator(x, y);
 			creatures.push_back(pred);
 			creatureMap[x][y] = pred;
 		}
-		else {
-			predators++;
-			// create predator
-			Prey* prey = new Prey(x, y);
-			creatures.push_back(prey);
-			creatureMap[x][y] = prey;
-		}
 	}
+	std::random_shuffle(creatures.begin(), creatures.end());
 }

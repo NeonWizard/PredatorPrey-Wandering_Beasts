@@ -2,6 +2,7 @@
 #define CREATURE_H
 
 #include <cstdlib>
+#include <vector>
 
 class Creature {
 	public:
@@ -12,13 +13,23 @@ class Creature {
 		int getX();
 		int getY();
 
-		void makeRandomMove(bool canNorth, bool canSouth, bool canEast, bool canWest);
+		int getMoveCount();
+		void resetMoveCount();
+
+		void getEaten();
+
+		virtual bool makeMove(std::vector< std::vector<Creature*> > &creatureMap);
 		virtual void draw(int posX, int posY, int width, int height);
+		virtual bool shouldDie();
 
 	protected:
 		size_t mX;
 		size_t mY;
 
+		int mMoveCount;
+
+		// Forgive me father for I have sinned
+		bool mIsEaten;
 };
 
 #endif // CREATURE_H
